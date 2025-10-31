@@ -1,0 +1,44 @@
+plugins {
+	id 'java'
+}
+
+group = 'com.resource'
+version = '1.0'
+description = 'Request Resource Profiler'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(24)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+    implementation 'net.bytebuddy:byte-buddy:1.17.8'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.1'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes(
+                'Premain-Class': 'com.resource.profiler.Profiler',
+                'Can-Redefine-Classes': 'true',
+                'Can-Retransform-Classes': 'true'
+        )
+    }
+}
+

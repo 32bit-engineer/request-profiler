@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Premain-Class: com.resource.profiler.Profiler
+Can-Redefine-Classes: true
+Can-Retransform-Classes: true
+
