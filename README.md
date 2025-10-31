@@ -5,7 +5,7 @@ This agent is intended to be attached to JVM applications using the `-javaagent`
 
 ---
 
-## ✅ Features
+## Features
 
 * **Java Agent using Premain-Class**
 * **Thread start advice instrumentation** via ByteBuddy
@@ -15,7 +15,7 @@ This agent is intended to be attached to JVM applications using the `-javaagent`
 
 ---
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 architect/
@@ -30,7 +30,7 @@ architect/
 
 ---
 
-## 🚀 How It Works
+## How It Works
 
 The profiler is packaged as a **Java Agent**, which means it runs before the application starts.
 
@@ -50,7 +50,7 @@ This class initializes Profiler and begins instrumentation.
 
 ---
 
-## 🛠 Requirements
+## Requirements
 
 * **Java 17+** (supports JDK 24 as used in your project)
 * **Gradle 8+**
@@ -61,7 +61,7 @@ This class initializes Profiler and begins instrumentation.
 
 ---
 
-## 🏗 Building the Agent
+## Building the Profiler
 
 To build the JAR:
 
@@ -77,7 +77,7 @@ build/libs/architect-1.0.jar
 
 ---
 
-## ▶ Running With a Target Application
+## Running With a Target Application
 
 To attach this profiler to any JVM app:
 
@@ -87,7 +87,7 @@ java -javaagent:/path/to/architect-1.0.jar -jar your-app.jar
 
 ---
 
-## 🧩 Manifest Configuration
+## Manifest Configuration
 
 Your `build.gradle` must include:
 
@@ -106,7 +106,7 @@ jar {
 
 ---
 
-## 🧪 Testing
+## Testing
 
 This project uses JUnit Platform. Run tests using:
 
