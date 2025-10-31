@@ -18,7 +18,7 @@ This agent is intended to be attached to JVM applications using the `-javaagent`
 ## Project Structure
 
 ```
-architect/
+resource-profiler/
 ├─ src/main/java/com/resource/profiler/
 │  ├─ agent/              # Request Advicers
 │  ├─ core/               # Core profiler logic
