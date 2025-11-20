@@ -1,127 +1,53 @@
-# Reqeust Resource Profiler
+# Request Resource Profiler
 
-A lightweight Java instrumentation agent built to collect profiling data such as thread lifecycle events, execution metrics, and contextual information. 
-This agent is intended to be attached to JVM applications using the `-javaagent` flag.
-
----
+A lightweight Java Agent designed to profile resource usage (CPU, memory, threads) at a **per-request level**. It is particularly useful for identifying the true cost of requests in threaded or asynchronous applications (e.g., Spring Boot, ExecutorServices).
 
 ## Features
 
-* **Java Agent using Premain-Class**
-* **Thread start advice instrumentation** via ByteBuddy
-* **Profiling hooks** for method calls, thread events, and contextual metadata
-* **JSON reporting** using Jackson Databind
-* **Supports class redefinition and retransformation**
-
----
+*   **Request Isolation**: Tracks resources for individual requests by instrumenting entry points (e.g., Controllers).
+*   **Thread Tracking**:
+    *   Captures all threads spawned by a request, including **Virtual Threads**.
+    *   Tracks tasks submitted to `Executor` and `ExecutorService`.
+    *   Identifies the **Origin Class** (the user code that created the thread/task).
+*   **Resource Metrics**:
+    *   **CPU Time**: Total CPU time consumed by the request and each of its threads.
+    *   **Allocated Memory**: Total bytes allocated by each thread (requires JDK 14+).
+    *   **GC Pressure**: Tracks GC events occurring during the request.
+*   **Traceability**: Generates a JSON report for each request, keyed by a unique Trace ID.
 
 ## Project Structure
 
 ```
-resource-profiler/
-├─ src/main/java/com/resource/profiler/
-│  ├─ agent/              # Request Advicers
-│  ├─ core/               # Core profiler logic
-│  └─ Profiler.java       # Premain entry point + Agent Configuratrion
-├─ src/main/resources/    # Manifest + config files - if any
-├─ build.gradle           
-└─ settings.gradle
+request-resource-profiler/
+├── src/main/java/com/resource/profiler/
+│   ├── Profiler.java          # Agent Entry Point & Instrumentation Logic
+│   ├── RequestContext.java    # Per-request state management
+│   ├── ThreadInfo.java        # Per-thread metrics
+│   ├── RunnableWrapper.java   # Context propagation for Runnables
+│   ├── CallableWrapper.java   # Context propagation for Callables
+│   └── GcMonitor.java         # GC Event Listener
+└── build.gradle               # Build configuration
 ```
-
----
-
-## How It Works
-
-The profiler is packaged as a **Java Agent**, which means it runs before the application starts.
-
-When the JVM is launched with:
-
-```
--javaagent:architect-1.0.jar
-```
-
-The JVM looks for the manifest entry:
-
-```
-Premain-Class: com.resource.profiler.Profiler
-```
-
-This class initializes Profiler and begins instrumentation.
-
----
 
 ## Requirements
 
-* **Java 17+** (supports JDK 24 as used in your project)
-* **Gradle 8+**
-* Dependencies:
+*   **Java 17+** (Tested with JDK 21/24)
+*   **Gradle 8+**
 
-    * `ByteBuddy`
-    * `Jackson Databind`
+## Quick Start
 
----
+1.  **Build the Agent**:
+    ```bash
+    ./gradlew clean build
+    ```
+    The agent JAR will be created at `build/libs/request-resource-profiler-1.0.jar`.
 
-## Building the Profiler
+2.  **Run with your Application**:
+    ```bash
+    java -javaagent:build/libs/request-resource-profiler-1.0.jar -jar your-app.jar
+    ```
 
-To build the JAR:
+3.  **Check Logs**:
+    After making requests to your application, check the `logs/` directory for JSON reports (e.g., `logs/request-<traceId>.json`).
 
-```
-./gradlew clean build
-```
-
-The output JAR will appear at:
-
-```
-build/libs/architect-1.0.jar
-```
-
----
-
-## Running With a Target Application
-
-To attach this profiler to any JVM app:
-
-```
-java -javaagent:/path/to/architect-1.0.jar -jar your-app.jar
-```
-
----
-
-## Manifest Configuration
-
-Your `build.gradle` must include:
-
-```gradle
-jar {
-    manifest {
-        attributes(
-            'Premain-Class': 'com.resource.profiler.Profiler',
-            'Agent-Class': 'com.resource.profiler.Profiler',
-            'Can-Redefine-Classes': 'true',
-            'Can-Retransform-Classes': 'true'
-        )
-    }
-}
-```
-
----
-
-## Testing
-
-This project uses JUnit Platform. Run tests using:
-
-```
-./gradlew test
-```
-
----
-
-## 📄 License
-
-This project is proprietary unless otherwise specified.
-
----
-
-## 🙋 Support
-
-If you encounter issues, feel free to ask for help or open an issue in your repository.
+See [USAGE.md](USAGE.md) for detailed instructions and output format.
