@@ -26,19 +26,6 @@ public class RunnableWrapper implements Runnable {
                 return className;
             }
         }
-        // Fallback: if no com.engine class found (e.g. called from library), return the
-        // first non-platform class?
-        // Or just return unknown as per request to "match package name".
-        // Let's keep a fallback to the first non-platform class just in case, or stick
-        // to the user's request.
-        // Given the user's explicit request, we'll prioritize com.engine, but maybe we
-        // should fallback
-        // to the old logic if not found?
-        // Actually, let's try to be helpful. If com.engine is not found, we might miss
-        // the origin if it's
-        // a 3rd party lib. But for now, let's stick to the user's request for
-        // simplicity.
-
         // Re-scanning for non-platform as fallback if com.engine not found
         for (StackTraceElement element : stack) {
             String className = element.getClassName();
@@ -88,8 +75,8 @@ public class RunnableWrapper implements Runnable {
                 }
             }
 
-            long cpuDelta = (startCpu != -1 && endCpu != -1) ? (endCpu - startCpu) : 0;
-            long allocDelta = (startAlloc != -1 && endAlloc != -1) ? (endAlloc - startAlloc) : 0;
+            long cpuDelta = (startCpu != -1 && endCpu != -1) ? (endCpu - startCpu) : -1;
+            long allocDelta = (startAlloc != -1 && endAlloc != -1) ? (endAlloc - startAlloc) : -1;
             long durationDelta = endTime - startTime;
 
             context.updateThreadMetrics(threadId, cpuDelta, allocDelta, durationDelta);

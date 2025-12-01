@@ -75,8 +75,8 @@ public class CallableWrapper<T> implements Callable<T> {
                 }
             }
 
-            long cpuDelta = (startCpu != -1 && endCpu != -1) ? (endCpu - startCpu) : 0;
-            long allocDelta = (startAlloc != -1 && endAlloc != -1) ? (endAlloc - startAlloc) : 0;
+            long cpuDelta = (startCpu != -1 && endCpu != -1) ? (endCpu - startCpu) : -1;
+            long allocDelta = (startAlloc != -1 && endAlloc != -1) ? (endAlloc - startAlloc) : -1;
             long durationDelta = endTime - startTime;
 
             context.updateThreadMetrics(threadId, cpuDelta, allocDelta, durationDelta);

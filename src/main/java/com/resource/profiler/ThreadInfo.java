@@ -47,10 +47,10 @@ public class ThreadInfo {
     }
 
     public void addMetrics(long cpuNanos, long allocBytes, long durationNanos) {
-        if (cpuNanos > 0) {
+        if (cpuNanos != -1) {
             this.cpuTimeNanos += cpuNanos;
         }
-        if (allocBytes > 0) {
+        if (allocBytes != -1) {
             if (this.allocatedBytes == -1)
                 this.allocatedBytes = 0;
             this.allocatedBytes += allocBytes;

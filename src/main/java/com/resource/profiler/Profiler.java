@@ -8,6 +8,10 @@ import java.lang.instrument.Instrumentation;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Profiler {
+  
+  private static final String CLAZZ_REQUEST_CONTEXT_HOLDER = "com.resource.profiler.RequestContextHolder";
+  private static final String CLAZZ_REQUEST_CONTEXT = "com.resource.profiler.RequestContext";
+  private static final String CLAZZ_PROFILER = "com.resource.profiler.Profiler";
 
   // Global request counter - MUST be public for Advice access
   public static final AtomicLong REQUEST_SEQ = new AtomicLong();
@@ -114,7 +118,7 @@ public class Profiler {
         // java.lang.Thread).
         ClassLoader systemLoader = ClassLoader.getSystemClassLoader();
         if (systemLoader != null) {
-          Class<?> profilerClass = systemLoader.loadClass("com.resource.profiler.Profiler");
+          Class<?> profilerClass = systemLoader.loadClass(CLAZZ_PROFILER);
           java.lang.reflect.Method method = profilerClass.getMethod("registerThread", Thread.class);
           method.invoke(null, thread);
         }
@@ -131,7 +135,7 @@ public class Profiler {
       try {
         ClassLoader systemLoader = ClassLoader.getSystemClassLoader();
         if (systemLoader != null) {
-          Class<?> profilerClass = systemLoader.loadClass("com.resource.profiler.Profiler");
+          Class<?> profilerClass = systemLoader.loadClass(CLAZZ_PROFILER);
           java.lang.reflect.Method method = profilerClass.getMethod("registerThread", Thread.class);
           method.invoke(null, thread);
         }
@@ -152,14 +156,14 @@ public class Profiler {
           return;
 
         // Load RequestContextHolder via TCCL
-        Class<?> holderClass = cl.loadClass("com.resource.profiler.RequestContextHolder");
+        Class<?> holderClass = cl.loadClass(CLAZZ_REQUEST_CONTEXT_HOLDER);
         java.lang.reflect.Method getMethod = holderClass.getMethod("get");
         Object ctx = getMethod.invoke(null);
 
         if (ctx != null) {
           // Load RunnableWrapper via TCCL
           Class<?> wrapperClass = cl.loadClass("com.resource.profiler.RunnableWrapper");
-          Class<?> contextClass = cl.loadClass("com.resource.profiler.RequestContext");
+          Class<?> contextClass = cl.loadClass(CLAZZ_REQUEST_CONTEXT);
           java.lang.reflect.Constructor<?> ctor = wrapperClass.getConstructor(Runnable.class, contextClass);
           task = (Runnable) ctor.newInstance(task, ctx);
         }
@@ -179,13 +183,13 @@ public class Profiler {
         if (cl == null)
           return;
 
-        Class<?> holderClass = cl.loadClass("com.resource.profiler.RequestContextHolder");
+        Class<?> holderClass = cl.loadClass(CLAZZ_REQUEST_CONTEXT_HOLDER);
         java.lang.reflect.Method getMethod = holderClass.getMethod("get");
         Object ctx = getMethod.invoke(null);
 
         if (ctx != null) {
           Class<?> wrapperClass = cl.loadClass("com.resource.profiler.RunnableWrapper");
-          Class<?> contextClass = cl.loadClass("com.resource.profiler.RequestContext");
+          Class<?> contextClass = cl.loadClass(CLAZZ_REQUEST_CONTEXT);
           java.lang.reflect.Constructor<?> ctor = wrapperClass.getConstructor(Runnable.class, contextClass);
           task = (Runnable) ctor.newInstance(task, ctx);
         }
@@ -205,13 +209,13 @@ public class Profiler {
         if (cl == null)
           return;
 
-        Class<?> holderClass = cl.loadClass("com.resource.profiler.RequestContextHolder");
+        Class<?> holderClass = cl.loadClass(CLAZZ_REQUEST_CONTEXT_HOLDER);
         java.lang.reflect.Method getMethod = holderClass.getMethod("get");
         Object ctx = getMethod.invoke(null);
 
         if (ctx != null) {
           Class<?> wrapperClass = cl.loadClass("com.resource.profiler.CallableWrapper");
-          Class<?> contextClass = cl.loadClass("com.resource.profiler.RequestContext");
+          Class<?> contextClass = cl.loadClass(CLAZZ_REQUEST_CONTEXT);
           java.lang.reflect.Constructor<?> ctor = wrapperClass.getConstructor(java.util.concurrent.Callable.class,
               contextClass);
           task = (java.util.concurrent.Callable<?>) ctor.newInstance(task, ctx);
